@@ -58,5 +58,62 @@
 // =============================================================================
 // YOUR CODE BELOW — remove the // symbols from the scaffold and fill it in
 // =============================================================================
+const readline = require("readline");
 
+// Standard Node input interface (built-in)
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
 
+// Helper function to read user input asynchronously
+function askQuestion(query) {
+  return new Promise((resolve) => rl.question(query, resolve));
+}
+
+// PART A — Print the multiplication table for a single number (1 to 12)
+function printSingleTable(num) {
+  console.log(`\nMultiplication Table for ${num}:`);
+  for (let i = 1; i <= 12; i++) {
+    console.log(`${num}  x  ${i}  =  ${num * i}`);
+  }
+}
+
+// PART B — Print multiplication tables from 1 up to N
+function printTablesUpToN(n) {
+  for (let i = 1; i <= n; i++) {
+    printSingleTable(i);
+    if (i < n) {
+      console.log("---------------------------");
+    }
+  }
+}
+
+// Main execution function
+async function main() {
+  console.log("=== PART A: SINGLE TABLE ===");
+  const inputA = await askQuestion("Enter a number: ");
+  const numA = parseInt(inputA);
+
+  if (isNaN(numA) || numA <= 0) {
+    console.log("Error: Please enter a positive integer greater than 0.");
+  } else {
+    printSingleTable(numA);
+  }
+
+  console.log("\n===================================");
+  console.log("=== PART B: TABLES FROM 1 TO N ===");
+  const inputB = await askQuestion("Enter N: ");
+  const numB = parseInt(inputB);
+
+  if (isNaN(numB) || numB <= 0) {
+    console.log("Error: Please enter a positive integer greater than 0.");
+  } else {
+    printTablesUpToN(numB);
+  }
+
+  rl.close();
+}
+
+// Execute program
+main();
