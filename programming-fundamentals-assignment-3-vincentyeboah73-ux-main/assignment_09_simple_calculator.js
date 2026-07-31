@@ -75,3 +75,111 @@
 // =============================================================================
 
 
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+function askQuestion(query) {
+  return new Promise((resolve) => rl.question(query, resolve));
+}
+
+function add(a, b) { return a + b; }
+function subtract(a, b) { return a - b; }
+function multiply(a, b) { return a * b; }
+function divide(a, b) { return b === 0 ? null : a / b; }
+function modulus(a, b) { return b === 0 ? null : a % b; }
+function power(a, b) { return Math.pow(a, b); }
+
+async function getNumbers() {
+  const num1Input = await askQuestion("Enter first number : ");
+  const num2Input = await askQuestion("Enter second number: ");
+  const num1 = parseFloat(num1Input);
+  const num2 = parseFloat(num2Input);
+
+  if (isNaN(num1) || isNaN(num2)) {
+    console.log("Error: Please enter valid numbers.");
+    return null;
+  }
+
+  return { num1, num2 };
+}
+
+function showMenu() {
+  console.log("\n============================");
+  console.log("       SIMPLE CALCULATOR     ");
+  console.log("============================");
+  console.log("1. Addition");
+  console.log("2. Subtraction");
+  console.log("3. Multiplication");
+  console.log("4. Division");
+  console.log("5. Modulus");
+  console.log("6. Exponentiation");
+  console.log("7. Quit");
+}
+
+async function main() {
+  let running = true;
+
+  while (running) {
+    showMenu();
+    const choice = (await askQuestion("Select an operation (1-7): ")).trim();
+
+    if (choice === "7") {
+      console.log("Goodbye!");
+      running = false;
+      rl.close();
+      break;
+    }
+
+    if (!["1", "2", "3", "4", "5", "6"].includes(choice)) {
+      console.log("Error: Invalid option. Please enter a number from 1 to 7.");
+      continue;
+    }
+
+    const nums = await getNumbers();
+    if (!nums) continue;
+
+    const { num1, num2 } = nums;
+    let result = null;
+
+    switch (choice) {
+      case "1":
+        result = add(num1, num2);
+        console.log(`Result: ${num1} + ${num2} = ${result.toFixed(2)}`);
+        break;
+      case "2":
+        result = subtract(num1, num2);
+        console.log(`Result: ${num1} - ${num2} = ${result.toFixed(2)}`);
+        break;
+      case "3":
+        result = multiply(num1, num2);
+        console.log(`Result: ${num1} * ${num2} = ${result.toFixed(2)}`);
+        break;
+      case "4":
+        result = divide(num1, num2);
+        if (result === null) {
+          console.log("Error: Cannot divide by zero.");
+        } else {
+          console.log(`Result: ${num1} / ${num2} = ${result.toFixed(2)}`);
+        }
+        break;
+      case "5":
+        result = modulus(num1, num2);
+        if (result === null) {
+          console.log("Error: Cannot perform modulus by zero.");
+        } else {
+          console.log(`Result: ${num1} % ${num2} = ${result.toFixed(2)}`);
+        }
+        break;
+      case "6":
+        result = power(num1, num2);
+        console.log(`Result: ${num1} ** ${num2} = ${result.toFixed(2)}`);
+        break;
+    }
+  }
+}
+
+main();
