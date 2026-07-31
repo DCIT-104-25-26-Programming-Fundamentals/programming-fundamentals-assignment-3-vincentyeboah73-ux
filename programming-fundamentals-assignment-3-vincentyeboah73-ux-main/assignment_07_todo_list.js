@@ -81,4 +81,95 @@
 // YOUR CODE BELOW — remove the // symbols from the scaffold and fill it in
 // =============================================================================
 
+const readline = require("readline");
 
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+function askQuestion(query) {
+  return new Promise((resolve) => rl.question(query, resolve));
+}
+
+let tasks = [];
+
+async function addTask() {
+  const task = (await askQuestion("Enter task: ")).trim();
+  if (task === "") {
+    console.log("Error: Task description cannot be empty.");
+  } else {
+    tasks.push(task);
+    console.log(`Task added: "${task}"`);
+  }
+}
+
+function viewTasks() {
+  if (tasks.length === 0) {
+    console.log("Your to-do list is currently empty!");
+    return;
+  }
+
+  console.log("\nYour Tasks:");
+  for (let i = 0; i < tasks.length; i++) {
+    console.log(`${i + 1}. ${tasks[i]}`);
+  }
+}
+
+async function deleteTask() {
+  if (tasks.length === 0) {
+    console.log("No tasks available to delete.");
+    return;
+  }
+
+  viewTasks();
+  const input = await askQuestion("\nEnter task number to delete: ");
+  const taskNum = parseInt(input);
+
+  if (isNaN(taskNum) || taskNum < 1 || taskNum > tasks.length) {
+    console.log("Error: Invalid task number.");
+  } else {
+    const removed = tasks.splice(taskNum - 1, 1);
+    console.log(`Task "${removed[0]}" has been removed.`);
+  }
+}
+
+function showMenu() {
+  console.log("\n============================");
+  console.log("       TO-DO LIST MENU      ");
+  console.log("============================");
+  console.log("1. Add task");
+  console.log("2. View tasks");
+  console.log("3. Delete task");
+  console.log("4. Quit");
+}
+
+async function main() {
+  let running = true;
+
+  while (running) {
+    showMenu();
+    const choice = (await askQuestion("Enter your choice (1-4): ")).trim();
+
+    switch (choice) {
+      case "1":
+        await addTask();
+        break;
+      case "2":
+        viewTasks();
+        break;
+      case "3":
+        await deleteTask();
+        break;
+      case "4":
+        console.log("Goodbye!");
+        running = false;
+        rl.close();
+        break;
+      default:
+        console.log("Error: Invalid option. Please enter a number from 1 to 4.");
+    }
+  }
+}
+
+main();
