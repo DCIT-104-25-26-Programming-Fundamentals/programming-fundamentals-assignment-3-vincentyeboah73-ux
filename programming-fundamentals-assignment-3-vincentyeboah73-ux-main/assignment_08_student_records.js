@@ -85,3 +85,148 @@
 // =============================================================================
 
 
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+function askQuestion(query) {
+  return new Promise((resolve) => rl.question(query, resolve));
+}
+
+let students = [];
+
+function calculateAverage(scores) {
+  if (scores.length === 0) return 0;
+  let sum = 0;
+  for (let i = 0; i < scores.length; i++) {
+    sum += scores[i];
+  }
+  return sum / scores.length;
+}
+
+async function addStudent() {
+  const name = (await askQuestion("Student name: ")).trim();
+  if (name === "") {
+    console.log("Error: Student name cannot be empty.");
+    return;
+  }
+
+  const idInput = (await askQuestion("Student ID: ")).trim();
+  const id = parseInt(idInput);
+  if (isNaN(id)) {
+    console.log("Error: Invalid Student ID.");
+    return;
+  }
+
+  const countInput = (await askQuestion("How many scores? ")).trim();
+  const scoreCount = parseInt(countInput);
+  if (isNaN(scoreCount) || scoreCount <= 0) {
+    console.log("Error: Score count must be a positive integer.");
+    return;
+  }
+
+  const scores = [];
+  for (let i = 1; i <= scoreCount; i++) {
+    const scoreInput = (await askQuestion(`Enter score ${i}: `)).trim();
+    const score = parseFloat(scoreInput);
+    if (isNaN(score)) {
+      console.log("Error: Invalid score entered. Defaulting to 0.");
+      scores.push(0);
+    } else {
+      scores.push(score);
+    }
+  }
+
+  students.push({ name, id, scores });
+  console.log(`Student "${name}" added successfully.`);
+}
+
+function displayAllStudents() {
+  if (students.length === 0) {
+    console.log("\nNo student records available.");
+    return;
+  }
+
+  console.log("\n================ ALL STUDENTS ================");
+  for (let i = 0; i < students.length; i++) {
+    const s = students[i];
+    const avg = calculateAverage(s.scores).toFixed(2);
+    console.log(
+      `ID: ${s.id} | Name: ${s.name} | Scores: [${s.scores.join(", ")}] | Average: ${avg}`
+    );
+  }
+  console.log("==============================================");
+}
+
+async function calculateStudentAverage() {
+  if (students.length === 0) {
+    console.log("\nNo student records available.");
+    return;
+  }
+
+  const idInput = (await askQuestion("\nEnter student ID: ")).trim();
+  const id = parseInt(idInput);
+
+  if (isNaN(id)) {
+    console.log("Error: Invalid Student ID.");
+    return;
+  }
+
+  let foundStudent = null;
+  for (let i = 0; i < students.length; i++) {
+    if (students[i].id === id) {
+      foundStudent = students[i];
+      break;
+    }
+  }
+
+  if (foundStudent) {
+    const avg = calculateAverage(foundStudent.scores).toFixed(2);
+    console.log(`${foundStudent.name}'s average score: ${avg}`);
+  } else {
+    console.log(`Error: Student with ID ${id} not found.`);
+  }
+}
+
+function showMenu() {
+  console.log("\n================================");
+  console.log("   STUDENT RECORD SYSTEM MENU   ");
+  console.log("================================");
+  console.log("1. Add student");
+  console.log("2. Display all students");
+  console.log("3. Calculate average score");
+  console.log("4. Quit");
+}
+
+async function main() {
+  let running = true;
+
+  while (running) {
+    showMenu();
+    const choice = (await askQuestion("Enter your choice (1-4): ")).trim();
+
+    switch (choice) {
+      case "1":
+        await addStudent();
+        break;
+      case "2":
+        displayAllStudents();
+        break;
+      case "3":
+        await calculateStudentAverage();
+        break;
+      case "4":
+        console.log("Goodbye!");
+        running = false;
+        rl.close();
+        break;
+      default:
+        console.log("Error: Invalid choice. Please enter a number between 1 and 4.");
+    }
+  }
+}
+
+main();
