@@ -42,5 +42,78 @@
 // =============================================================================
 // YOUR CODE BELOW — remove the // symbols from the scaffold and fill it in
 // =============================================================================
+const readline = require("readline-sync");
 
+// Function to calculate the sum of numbers in an array
+function calculateSum(numbers) {
+  let sum = 0;
+  for (let i = 0; i < numbers.length; i++) {
+    sum += numbers[i];
+  }
+  return sum;
+}
+
+// Function to calculate the average of numbers in an array
+function calculateAverage(numbers) {
+  const sum = calculateSum(numbers);
+  return sum / numbers.length;
+}
+
+// Function to find the maximum number in an array
+function findMax(numbers) {
+  let max = numbers[0];
+  for (let i = 1; i < numbers.length; i++) {
+    if (numbers[i] > max) {
+      max = numbers[i];
+    }
+  }
+  return max;
+}
+
+// Function to find the minimum number in an array
+function findMin(numbers) {
+  let min = numbers[0];
+  for (let i = 1; i < numbers.length; i++) {
+    if (numbers[i] < min) {
+      min = numbers[i];
+    }
+  }
+  return min;
+}
+
+// Main execution function
+function main() {
+  const countInput = readline.question("How many numbers? ");
+  const count = parseInt(countInput);
+
+  // Validate that count is a positive integer
+  if (isNaN(count) || count <= 0) {
+    console.log("Error: Please enter a positive integer greater than 0.");
+    return;
+  }
+
+  const numbers = [];
+
+  // Read numbers from user input
+  for (let i = 1; i <= count; i++) {
+    const input = readline.question(`Enter number ${i}: `);
+    numbers.push(parseFloat(input));
+  }
+
+  // Calculate results using individual functions
+  const sum = calculateSum(numbers);
+  const average = calculateAverage(numbers);
+  const max = findMax(numbers);
+  const min = findMin(numbers);
+
+  // Print results
+  console.log("\nResults:");
+  console.log(`Sum:     ${sum}`);
+  console.log(`Average: ${average}`);
+  console.log(`Maximum: ${max}`);
+  console.log(`Minimum: ${min}`);
+}
+
+// Execute the main program
+main();
 
